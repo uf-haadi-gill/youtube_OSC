@@ -1726,8 +1726,64 @@ satus.components.layers = function(component, skeleton) {
 		satus.empty(layer);
 		satus.render(layer.skeleton, layer);
 	};
-
 	component.open(skeleton);
+
+	// Create text box, slider, and box elements
+	const hexInput = component.createChildElement('input', 'hex-color-input');
+	hexInput.placeholder = '#FFFFFF';
+	hexInput.addEventListener('input', validateAndApplyColor);
+  
+	const slider = component.createChildElement('input', 'color-slider');
+	slider.type = 'range';
+  
+	const box = component.createChildElement('div', 'color-box');
+	box.style.width = '50px';
+	box.style.height = '50px';
+	box.style.backgroundColor = '#FFFFFF'; // Initial color
+  
+	component.appendChild(hexInput);
+	component.appendChild(slider);
+	component.appendChild(box);
+  
+	// ... (existing code)
+
+	function validateAndApplyColor(event) {
+		const hexInput = event.target;
+		const hexValue = hexInput.value.trim();
+		
+		// Regular expression for validating hex code format (case-insensitive)
+		const validHexRegex = /^#?([0-9a-fA-F]{3}){1,2}$/;
+		
+		if (!validHexRegex.test(hexValue)) {
+			hexValue = 0;
+		}
+	
+		// Remove leading `#` if present
+		const colorValue = hexValue.startsWith('#') ? hexValue.slice(1) : hexValue;
+		
+		// Update slider and box color
+		updateSliderAndBoxColor(colorValue);
+	}
+
+	function updateSliderAndBoxColor(hexValue) {
+	// Update slider position (implement your slider logic here)
+	slider.value = rgbToHsl(hexValue); // Call your conversion function
+	
+	// Update box color
+	box.style.backgroundColor = `#${hexValue}`;
+	
+	// Store the hex value (you can adapt this based on your storage mechanism)
+	currentColor = hexValue;
+	
+	// Pass the hex value to satus.render for further processing
+	satus.render(skeleton, layer, hexValue); // Assuming skeleton and layer are valid arguments
+	}
+
+	function updateSliderAndBoxColor(hexValue) {
+	  // ... (slider and box update logic)
+  
+	  satus.render(skeleton, layer, hexValue); // Pass hex value to satus.render
+	}
 };
 /*--------------------------------------------------------------
 >>> LIST
